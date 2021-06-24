@@ -20,6 +20,9 @@ public class RangerScript : MonoBehaviour
         {
             isReady = true;
         }
+        else {
+            isReady = false;
+        }
 
     }
 

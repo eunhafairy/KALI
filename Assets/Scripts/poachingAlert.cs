@@ -6,17 +6,29 @@ public class poachingAlert : MonoBehaviour
 {
 
     [SerializeField] PlayerData player;
+    [SerializeField] BarracksScript barracks;
     [SerializeField] int rate = 10, deployRate = 10, no_poachers;
-    [SerializeField] GameObject gObj_poach_alert;
+    [SerializeField] GameObject gObj_poach_alert, deployWindow, poachWindow, poachWindowAvail;
     [SerializeField] bool flag, flag2;
     [SerializeField] TextMeshProUGUI tmp_message;
+    
 
     void Start()
     {
+
+        //disable alert windows at start
+        gObj_poach_alert.SetActive(false);
+        deployWindow.SetActive(false);
+        poachWindow.SetActive(false);
+        poachWindowAvail.SetActive(false);
+
+
+        //time scale to 1, initialize bools
         Time.timeScale = 1f;
         flag2 = false;
         flag = false;
-        gObj_poach_alert.SetActive(false);
+        
+        //invoke poaching activities
         InvokeRepeating("poacherAlert", 10, rate);
     }
 
@@ -28,8 +40,8 @@ public class poachingAlert : MonoBehaviour
         {
             //50% chance to trigger
             int chance = Random.Range(1, 10);
-            Debug.Log(chance);
-            if (chance < 5)
+            Debug.Log("Poacher alert chance: "+chance);
+            if (chance <= 5)
             {
                 StartCoroutine(timer());
 
@@ -43,14 +55,14 @@ public class poachingAlert : MonoBehaviour
 
     IEnumerator timer()
     {
-        flag = false;
-        
+        flag = false; 
         gObj_poach_alert.SetActive(true);
         yield return new WaitForSeconds(5);
+
         //after 5 seconds if not clicked, decrease tamaraw population and set game object to false
         gObj_poach_alert.SetActive(false);
+        
         flag2 = false;
-
         if (!flag && !flag2) { 
 
             //decrease tamaraw
@@ -65,10 +77,35 @@ public class poachingAlert : MonoBehaviour
 
     public void isClickedConfirm() {
         
-        flag = true;
-        Time.timeScale = 1f;
-        //algorithm here 
+       
+        int avail = 0;
+        // Time.timeScale = 1f;
+        //algorithm here
+        for (int x= 0; x < barracks.noRangers; x++) {
 
+            if (barracks.transform.GetChild(x).gameObject.GetComponent<RangerScript>().isReady) {
+                avail++;
+            
+            }
+
+        
+        }
+        if (avail > 0)
+        {
+            flag = true;
+            PlayerPrefs.SetInt("avail", avail);
+            PlayerPrefs.SetInt("poachers", no_poachers);
+            poachWindow.SetActive(false);
+            deployWindow.SetActive(true);
+        }
+        else {
+
+            //warning here
+            poachWindowAvail.SetActive(true);
+            poachWindow.SetActive(false);
+            Debug.LogError("No available rangers!");
+        
+        }
 
 
     }
@@ -80,21 +117,12 @@ public class poachingAlert : MonoBehaviour
     }
 
     public void warningClicked() {
-        if (PlayerPrefs.GetInt("no_of_avail") > 0)
-        {
+      
             Time.timeScale = 0f;
             int rand = Random.Range(1,3);
             no_poachers = rand;
             tmp_message.SetText("There are "+ no_poachers + " poacher/s. Deploy rangers?");
-
-
-        }
-        else {
-
-            Debug.Log("Rangers not available.");
-        }
-        
-    
+            
     }
 
     public void globalCancel() {
@@ -102,36 +130,6 @@ public class poachingAlert : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    public IEnumerator deployRanger(int no_of_rangers, int no_of_poachers) {
-
-        //disable no_of_rangers availability
-        PlayerPrefs.SetInt("no_of_avail", PlayerPrefs.GetInt("no_of_avail") - no_of_rangers);
-        //wait for n seconds
-        yield return new WaitForSeconds(deployRate);
-
-        //logic for rangers vs poachers
-        PlayerPrefs.SetInt("no_of_avail", PlayerPrefs.GetInt("no_of_avail") + no_of_rangers);
-
-        //per ranger, success rate is 11%
-    
-        int chance = (int) Random.Range(1, ((no_of_rangers * 0.11f)*100));
-
-        int rand = (int) Random.Range(1,(100 + (no_of_poachers * 0.15f)*100));
-        if (rand <= chance) {
-            //success
-            Debug.Log("Success");
-
-        }
-        else {
-            //fail
-            Debug.Log("Fail");
-
-            //kill tamaraws
-            int toKill = Random.Range(1 * (no_of_poachers), 3 * no_of_poachers);
-            PlayerPrefs.SetInt("tmrw_number", PlayerPrefs.GetInt("tmrw_number") - toKill);
-        }
-
-    }
 
 }
     

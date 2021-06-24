@@ -9,7 +9,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] PlayerData player;
     [SerializeField] BarracksScript barracks;
     [SerializeField] GameObject[] rangers;
-    // Start is called before the first frame update
+    private void Start()
+    {
+        InvokeRepeating("salary",10,30);
+    }
     public void SavePlayer() {
 
         SaveSystem.SavePlayer(player, barracks);
@@ -42,5 +45,14 @@ public class GameManager : MonoBehaviour
         }
 
     
+    }
+
+    public void salary() {
+
+        
+        int no_emp = (barracks.noRangers)*2000;
+        Debug.LogWarning("Payday! Your funds are deducted by: "+no_emp);
+        player.playerFund -= no_emp; 
+
     }
 }
