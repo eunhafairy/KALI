@@ -21,7 +21,6 @@ public class MouseOver : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0)) { 
             g_obj_barracks_panel.SetActive(true);
-            Time.timeScale = 0f;
             Debug.Log("Wnt here");
         }
     }

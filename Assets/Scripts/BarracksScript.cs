@@ -4,20 +4,24 @@ using UnityEngine;
 using TMPro;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.UI;
 public class BarracksScript : MonoBehaviour
 {
-
+    
+    [SerializeField] GameObject progressPrefab;
+    [SerializeField] Transform progressPanel;
     public int level, noRangers, no_of_avail, maxRangers;
     public int[] rangerEnergy;
-    [SerializeField] int rangerCost;
+    [SerializeField] int rangerCost, availableRanger;
     [SerializeField] TextMeshProUGUI tmp_brk_lvl, tmp_no_of_ranger;
     [SerializeField] GameObject rangers; //prefab reference
-    GameObject[] ranger; //objects
+    GameObject[] ranger, progressCard; //objects
     public PlayerData player;
     void Start()
     {
 
         ranger = new GameObject[6];
+       
         rangerEnergy = new int[6];
 
 
@@ -46,7 +50,7 @@ public class BarracksScript : MonoBehaviour
             }
             for (int x = 0; x < noRangers; x++) {
                 transform.GetChild(x).gameObject.GetComponent<RangerScript>().energy = rangerEnergy[x];
-
+              
             }
 
 
@@ -58,15 +62,29 @@ public class BarracksScript : MonoBehaviour
             noRangers = 1;
             Instantiate(rangers, this.transform);   
             ranger[0] = transform.GetChild(0).gameObject;
-   
-            rangerEnergy[0] = ranger[0].GetComponent<RangerScript>().energy;
-           
+
+            rangerEnergy[0] = 100;
+            ranger[0].GetComponent<RangerScript>().energy = 100;
+            
         }
 
-      
 
 
+        //for ranger's energy progress
+        progressCard = new GameObject[6];
 
+        for (int x = 0; x < noRangers; x++) {
+
+            Instantiate(progressPrefab, progressPanel);
+
+
+        }
+        for (int x = 0; x < noRangers; x++)
+        {
+
+            progressCard[x] = progressPanel.GetChild(x).gameObject;
+            
+        }
 
 
     }
@@ -74,9 +92,10 @@ public class BarracksScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        tmp_brk_lvl.SetText("Ranger's Barracks (Level "+level+")");
-        tmp_no_of_ranger.SetText(noRangers + "");
+
+
+        tmp_brk_lvl.SetText("Barracks (Level "+level+")");
+        tmp_no_of_ranger.SetText(getAvailable() + "/" + maxRangers);
 
         switch (level) {
 
@@ -117,13 +136,17 @@ public class BarracksScript : MonoBehaviour
 
         }
 
+        
+
         for (int x = 0; x < noRangers; x++) {
 
             rangerEnergy[x] = transform.GetChild(x).gameObject.GetComponent<RangerScript>().energy;
 
         }
-       
-      
+
+
+        progressBar();
+
     }
 
     public void addRangers() {
@@ -153,5 +176,34 @@ public class BarracksScript : MonoBehaviour
         }
     
     
+    }
+
+    private int getAvailable() {
+
+        int ctr = 0;
+        
+        
+        for (int x = 0; x < noRangers; x++)
+        {
+
+            if (transform.GetChild(x).gameObject.GetComponent<RangerScript>().energy == 100) {
+                ctr++;
+            } 
+
+        }
+        return ctr;
+
+
+    }
+
+    private void progressBar() {
+
+        for (int x = 0; x < noRangers; x++)
+        {
+
+            progressCard[x].transform.GetChild(2).gameObject.GetComponent<Slider>().value = transform.GetChild(x).gameObject.GetComponent<RangerScript>().energy; 
+
+        }
+
     }
 }
