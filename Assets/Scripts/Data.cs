@@ -8,6 +8,8 @@ public class Data
     //player
     public int fund;
     public int tamarawNumber;
+    public int playerLevel;
+    public int playerExp;
 
     //barracks
     public int barracksLevel;
@@ -19,6 +21,9 @@ public class Data
         rangerEnergy = new int[6];
         fund = player.playerFund;
         tamarawNumber = player.tamarawNumber;
+        playerLevel = player.playerLevel;
+        playerExp = player.playerExp;
+
         barracksLevel = barracks.level;
         noRangers = barracks.noRangers;
         for (int x = 0; x< noRangers; x++) {

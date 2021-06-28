@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Globalization;
+
 public class fundGeneration : MonoBehaviour
 {
 
@@ -19,7 +21,10 @@ public class fundGeneration : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        tmp_fund.SetText(player.playerFund.ToString());
+
+  
+        string fund = string.Format("Php {0:N}", player.playerFund);
+        tmp_fund.SetText(fund);
 
 
     }
@@ -46,11 +51,11 @@ public class fundGeneration : MonoBehaviour
         if (flag)
         {
             yield return new WaitForSeconds(5);
-            notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("You've got: " + rand + " funds.");
+            notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("You've got: Php " + rand.ToString("N") + " additional funding.");
             notif.GetComponent<Animator>().SetBool("isShow", true);
         }
         else {
-            notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("You've got: " + rand + " funds.");
+            notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("You've got: Php " + rand.ToString("N") + " additional funding.");
             notif.GetComponent<Animator>().SetBool("isShow", true);
         }
     

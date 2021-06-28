@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class BarracksScript : MonoBehaviour
 {
     
-    [SerializeField] GameObject progressPrefab;
+    [SerializeField] GameObject progressPrefab, encounterPanel;
     [SerializeField] Transform progressPanel;
     public int level, noRangers, no_of_avail, maxRangers;
     public int[] rangerEnergy;
@@ -95,7 +95,7 @@ public class BarracksScript : MonoBehaviour
 
 
         tmp_brk_lvl.SetText("Barracks (Level "+level+")");
-        tmp_no_of_ranger.SetText(getAvailable() + "/" + maxRangers);
+        tmp_no_of_ranger.SetText(getAvailable() + "/" + noRangers);
 
         switch (level) {
 
@@ -161,11 +161,27 @@ public class BarracksScript : MonoBehaviour
 
                 //instantiate ranger prefab as child
                 Instantiate(rangers, transform);
+                Instantiate(progressPrefab, progressPanel);
+                progressCard = new GameObject[6];
+                for (int x = 0; x < noRangers; x++)
+                {
+
+                    progressCard[x] = progressPanel.GetChild(x).gameObject;
+
+                }
+                Time.timeScale = 0f;
+                encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Success");
+                encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("+1 Ranger!");
+                encounterPanel.SetActive(true);
 
             }
             else {
                 //create warning here
                 Debug.LogError("Insufficient Funds");
+                Time.timeScale = 0f;
+                encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Warning");
+                encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Insufficient Funds.");
+                encounterPanel.SetActive(true);
             }
             
         }
@@ -173,6 +189,11 @@ public class BarracksScript : MonoBehaviour
 
             //warning here
             Debug.LogError("Max number of rangers achieved already!!!!");
+
+            Time.timeScale = 0f;
+            encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Warning");
+            encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Max capacity of Barracks reached! Level up the barrakcs for increased max capacity.");
+            encounterPanel.SetActive(true);
         }
     
     

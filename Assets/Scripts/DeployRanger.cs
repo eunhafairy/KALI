@@ -9,7 +9,7 @@ public class DeployRanger : MonoBehaviour
     [SerializeField] PlayerData player;
     [SerializeField] TextMeshProUGUI val, successRate;
     [SerializeField] Slider slider;
-    [SerializeField] GameObject notif;
+    [SerializeField] GameObject notif, encounterPanel;
     int max;
     bool flag;
 
@@ -41,18 +41,13 @@ public class DeployRanger : MonoBehaviour
         {
 
             //success
-
-            if (notif.GetComponent<Animator>().GetBool("isShow"))
-            {
-                Invoke("notifySuccess", 7);
-            }
-            else {
-
-                notifySuccess();
-            }
+            Time.timeScale = 0f;
+            encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Yeehaw!!");
+            encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Your rangers were successful in defending the tamaraws. Cheers!");
+            player.playerExp += 200; //player exp
+            encounterPanel.SetActive(true);
            
             Debug.LogWarning("Success! Rolled: " + rand + " out of " + max + ". Roll should be less than or equal to: " + chance);
-
             //energy of ranger to 50%
             int flagg = 0;
             for (int x = 0; x < barracks.noRangers; x++) {
@@ -73,6 +68,15 @@ public class DeployRanger : MonoBehaviour
             //fail
 
             Debug.LogWarning("Fail! Rolled: " + rand + " out of " + max + ". Roll should be less than or equal to: " + chance);
+            //kill tamaraws
+            flag = false;
+            int toKill = Random.Range(1 * (no_poacher), 3 * no_poacher);
+            player.tamarawNumber -= toKill;
+            Time.timeScale = 0f;
+            encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("No way!!");
+            encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The poachers won this round... They killed "  + toKill+" tamaraws and drained your ranger's full energy.");
+            player.playerExp += 50; //player exp
+            encounterPanel.SetActive(true);
 
             int flagg = 0;
             for (int x = 0; x < barracks.noRangers; x++)
@@ -91,60 +95,13 @@ public class DeployRanger : MonoBehaviour
             }
 
 
-            //kill tamaraws
-            flag = false;
-            int toKill = Random.Range(1 * (no_poacher), 3 * no_poacher);
-            player.tamarawNumber -= toKill;
-
-            if (notif.GetComponent<Animator>().GetBool("isShow"))
-            {
-                flag = true;
-                StartCoroutine(notifyFail(toKill));
-            }
-            else
-            {
-
-                StartCoroutine(notifyFail(toKill));
-
-            }
+           
+           
 
         }
 
 
     }
-    void hideNotif()
-    {
-
-        notif.GetComponent<Animator>().SetBool("isShow", false);
-
-
-    }
-
-    void notifySuccess(){
-
-        notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Success! Your rangers saved the tamaraws.");
-        notif.GetComponent<Animator>().SetBool("isShow", true);
-        Invoke("hideNotif", 5);
-
-    }
-
-    IEnumerator notifyFail(int toKill) {
-
-        if (flag)
-        {
-            yield return new WaitForSeconds(5);
-            notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Failed. " + toKill + " tamaraws are killed.");
-            notif.GetComponent<Animator>().SetBool("isShow", true);
-        }
-        else {
-            notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Failed. " + toKill + " tamaraws are killed.");
-            notif.GetComponent<Animator>().SetBool("isShow", true);
-        }
-        
-     
-        yield return new WaitForSeconds(5);
-        hideNotif();
-
-    }
+    
 
 }

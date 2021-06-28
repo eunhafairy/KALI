@@ -10,6 +10,8 @@ public class PlayerData : MonoBehaviour
     //player data   
     public int playerFund;
     public int tamarawNumber;
+    public int playerLevel;
+    public int playerExp;
     private void Start()
     {
         string path = Application.persistentDataPath + "/playerData.ss";
@@ -24,13 +26,37 @@ public class PlayerData : MonoBehaviour
 
             playerFund = data.fund;
             tamarawNumber = data.tamarawNumber;
+            playerLevel = data.playerLevel;
+            playerExp = data.playerExp;
       
         }
         else {
             //not existing, set funds and tamaraw number to default.
             playerFund = 10000;
             tamarawNumber = 100;
+            playerLevel = 1;
+            playerExp = 0;
         
+        }
+    }
+
+    private void Update()
+    {
+
+
+        switch (playerExp) {
+
+            case 1000:
+                playerLevel = 1;
+                break;
+            case 4000:
+                playerLevel = 2;
+                break;
+            case 9000:
+                playerLevel = 3;
+                break;
+
+
         }
     }
 

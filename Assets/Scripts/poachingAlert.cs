@@ -8,20 +8,20 @@ public class poachingAlert : MonoBehaviour
     [SerializeField] PlayerData player;
     [SerializeField] BarracksScript barracks;
     [SerializeField] int rate = 10, deployRate = 10, no_poachers;
-    [SerializeField] GameObject gObj_poach_alert, deployWindow, poachWindow, poachWindowAvail;
+    [SerializeField] GameObject gObj_poach_alert, deployWindow, poachWindow, poachWindowAvail, encounterPanel;
     [SerializeField] bool flag, flag2;
     [SerializeField] TextMeshProUGUI tmp_message;
     
 
     void Start()
     {
-
+      
         //disable alert windows at start
         gObj_poach_alert.SetActive(false);
         deployWindow.SetActive(false);
         poachWindow.SetActive(false);
         poachWindowAvail.SetActive(false);
-
+        encounterPanel.SetActive(false);
 
         //time scale to 1, initialize bools
         Time.timeScale = 1f;
@@ -68,7 +68,13 @@ public class poachingAlert : MonoBehaviour
             //decrease tamaraw
             int rand = Random.Range(1,5);
             player.tamarawNumber -= rand;
-            
+            Time.timeScale = 0f;
+            encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Aww...");
+            encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The poachers killed "+rand +" tamaraws.");
+            encounterPanel.SetActive(true);
+
+
+
         }
 
 
