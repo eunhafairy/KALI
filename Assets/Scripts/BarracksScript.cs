@@ -9,12 +9,13 @@ public class BarracksScript : MonoBehaviour
 {
     
     [SerializeField] GameObject progressPrefab, encounterPanel;
+    [SerializeField] Button upgradebutton;
     [SerializeField] Transform progressPanel;
     public int level, noRangers, no_of_avail, maxRangers;
     public int[] rangerEnergy;
-    [SerializeField] int rangerCost, availableRanger;
+    public int rangerCost, availableRanger;
     [SerializeField] TextMeshProUGUI tmp_brk_lvl, tmp_no_of_ranger;
-    [SerializeField] GameObject rangers; //prefab reference
+    [SerializeField] GameObject rangers, barracksUpgrade; //prefab reference
     GameObject[] ranger, progressCard; //objects
     public PlayerData player;
     void Start()
@@ -93,7 +94,16 @@ public class BarracksScript : MonoBehaviour
     void Update()
     {
 
+        
 
+        if (level <= player.playerLevel)
+        {
+            upgradebutton.interactable = true;
+
+        }
+        else {
+            upgradebutton.interactable = false;
+        }
         tmp_brk_lvl.SetText("Barracks (Level "+level+")");
         tmp_no_of_ranger.SetText(getAvailable() + "/" + noRangers);
 
@@ -154,7 +164,7 @@ public class BarracksScript : MonoBehaviour
         if (noRangers < maxRangers)
         {
             //add one ranger
-            if (rangerCost < player.playerFund)
+            if (rangerCost <= player.playerFund)
             {
                 player.playerFund -= rangerCost;
                 noRangers++;
@@ -192,10 +202,90 @@ public class BarracksScript : MonoBehaviour
 
             Time.timeScale = 0f;
             encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Warning");
-            encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Max capacity of Barracks reached! Level up the barrakcs for increased max capacity.");
+            encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Max capacity of Barracks reached! Level up the barracks for increased max capacity.");
             encounterPanel.SetActive(true);
         }
     
+    
+    }
+
+    public void upgradeMessage() {
+        barracksUpgrade.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Level "+level);
+        barracksUpgrade.transform.GetChild(3).gameObject.GetComponent<TextMeshProUGUI>().SetText("Level " + (level+1));
+        int barrackUpgradeCost = 0;
+        switch (level) {
+            case 1:
+                barrackUpgradeCost = 10000;
+                break;
+            case 2:
+                barrackUpgradeCost = 30000;
+                break;
+            case 3:
+                barrackUpgradeCost = 60000;
+                break;
+
+
+        }
+        barracksUpgrade.transform.GetChild(6).gameObject.GetComponent<TextMeshProUGUI>().SetText("Php "+ barrackUpgradeCost.ToString("N"));
+
+
+
+    }
+    public void upgradeBarracks() {
+
+        switch (level) {
+
+            case 1:
+
+                
+                if (player.playerFund >= 10000)
+                {
+                    level++;
+                    player.playerExp += 200;
+                    player.playerFund -= 1000;
+                }
+                else {
+                    Debug.LogWarning("insufficient funds");
+                    Time.timeScale = 0f;
+                    encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Warning");
+                    encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Insufficient Funds!");
+                    encounterPanel.SetActive(true);
+                }
+                break;
+            case 2:
+                if (player.playerFund >= 30000)
+                {
+                    level++;
+                    player.playerExp += 300;
+                    player.playerFund -= 30000;
+                }
+                else
+                {
+                    Debug.LogWarning("insufficient funds");
+                    Time.timeScale = 0f;
+                    encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Warning");
+                    encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Insufficient Funds!");
+                    encounterPanel.SetActive(true);
+                }
+                break;
+            case 3:
+                if (player.playerFund >= 60000)
+                {
+                    level++;
+                    player.playerExp += 500;
+                    player.playerFund -= 60000;
+                }
+                else
+                {
+                    Debug.LogWarning("insufficient funds");
+                    Time.timeScale = 0f;
+                    encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Warning");
+                    encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Insufficient Funds!");
+                    encounterPanel.SetActive(true);
+                }
+                break;
+        
+        }
     
     }
 

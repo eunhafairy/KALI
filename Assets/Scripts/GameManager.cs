@@ -5,22 +5,24 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
 
     [SerializeField] PlayerData player;
     [SerializeField] BarracksScript barracks;
     [SerializeField] GameObject[] rangers;
-    [SerializeField] GameObject notif, salaryPanel, barracksPanel, expSlider;
+    [SerializeField] GameObject notif, salaryPanel, barracksPanel, expSlider, encounterPanel;
+    [SerializeField] TextMeshProUGUI tmp_plyerLvl;
     bool flag;
     private void Start()
     {
 
         salaryPanel.SetActive(false);
-        flag = false;
+        flag = true;
         notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Hello!");
-   
 
+   
         InvokeRepeating("salary",10,30);
     }
     public void SavePlayer() {
@@ -105,12 +107,54 @@ public class GameManager : MonoBehaviour
         }
 
         expSlider.GetComponent<Slider>().value = player.playerExp;
+
+        tmp_plyerLvl.SetText("Lvl."+player.playerLevel);
+
+        if (player.playerFund < 0)
+        {
+            StartCoroutine(countdown());
+        }
+        else {
+            flag = true;
+            StopAllCoroutines();
+        }
+     
     }
 
     public void globalPause() {
         Time.timeScale = 0f;
     
     }
+
+    IEnumerator countdown() {
+
+        if (flag) {
+            while (player.playerFund < 0) {
+                flag = false;
+                Debug.LogError("Fund below 0!!!");
+                yield return new WaitForSeconds(5);
+                Time.timeScale = 0f;
+                encounterPanel.SetActive(true);
+            }
+            
+        }
+      
+    
+    }
+
+    public void MainMenu() {
+        SceneManager.LoadScene(0);
+    
+    }
+
+    public void exitGame() {
+        Application.Quit();
+    
+    }
+
+
+
+    
 
 
 }

@@ -12,6 +12,7 @@ public class PlayerData : MonoBehaviour
     public int tamarawNumber;
     public int playerLevel;
     public int playerExp;
+    
     private void Start()
     {
         string path = Application.persistentDataPath + "/playerData.ss";
@@ -42,22 +43,22 @@ public class PlayerData : MonoBehaviour
 
     private void Update()
     {
-
-
-        switch (playerExp) {
-
-            case 1000:
-                playerLevel = 1;
-                break;
-            case 4000:
-                playerLevel = 2;
-                break;
-            case 9000:
-                playerLevel = 3;
-                break;
+        if (playerExp <= 1000) {
+            playerLevel = 1;
+        }
+        else if (playerExp > 1000 && playerExp <= 4000) { 
+            playerLevel = 2;
 
 
         }
+        else if (playerExp > 1000 && playerExp <= 4000) { 
+            playerLevel = 3;
+
+
+        }
+    
+
     }
+
 
 }
