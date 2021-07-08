@@ -6,28 +6,32 @@ using System.Runtime.Serialization.Formatters.Binary;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 public class GameManager : MonoBehaviour
 {
 
     [SerializeField] PlayerData player;
     [SerializeField] BarracksScript barracks;
+    [SerializeField] ClinicScript clinic;
     [SerializeField] GameObject[] rangers;
-    [SerializeField] GameObject notif, salaryPanel, barracksPanel, expSlider, encounterPanel;
+    [SerializeField] GameObject notif, salaryPanel, barracksPanel, expSlider, encounterPanel, clinicPanel, pausePanel, poachingWindow, deployWindow, buyRanger, gameover, injuredPanel, canvasPanel;
     [SerializeField] TextMeshProUGUI tmp_plyerLvl;
+    [SerializeField] WardScript ward;
+    [SerializeField] int injuredRate;
     bool flag;
     private void Start()
     {
-
+        injuredPanel.SetActive(false);
         salaryPanel.SetActive(false);
         flag = true;
         notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Hello!");
-
-   
-        InvokeRepeating("salary",10,30);
+        injuredRate = 10;
+        InvokeRepeating("findInjured", 10, injuredRate);
+        InvokeRepeating("salary",20,50);
     }
     public void SavePlayer() {
 
-        SaveSystem.SavePlayer(player, barracks);
+        SaveSystem.SavePlayer(player, barracks, clinic, ward);
 
     
     }
@@ -41,12 +45,15 @@ public class GameManager : MonoBehaviour
         
         barracks.level = data.barracksLevel;
         barracks.noRangers = data.noRangers;
+        clinic.level = data.clinicLevel;
         
         for (int x = 0; x < barracks.noRangers; x++) {
             barracks.transform.GetChild(x).gameObject.GetComponent<RangerScript>().energy = data.rangerEnergy[x];
         
         }
     }
+
+  
 
     public void deleteFiles() {
 
@@ -62,8 +69,8 @@ public class GameManager : MonoBehaviour
     public void salary() {
 
         
-        int no_emp = (barracks.noRangers)*2000;
-        Debug.LogWarning("Payday! Your funds are deducted by: "+no_emp);
+        int no_emp = (barracks.noRangers*2000) + (clinic.noVet * 3000);
+
         player.playerFund -= no_emp;
         salaryNotice();
        
@@ -78,7 +85,10 @@ public class GameManager : MonoBehaviour
         salaryPanel.SetActive(true);
         salaryPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Rangers x"+ barracks.noRangers); //ranger number
         salaryPanel.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().SetText("Php "+(2000 * barracks.noRangers).ToString("N")); //ranger total
-        salaryPanel.transform.GetChild(9).gameObject.GetComponent<TextMeshProUGUI>().SetText("Php " + (2000 * barracks.noRangers).ToString("N")); //total salary
+        salaryPanel.transform.GetChild(5).gameObject.GetComponent<TextMeshProUGUI>().SetText("Vets x" + barracks.noRangers); //vet number
+        salaryPanel.transform.GetChild(6).gameObject.GetComponent<TextMeshProUGUI>().SetText("Php " + (3000 * clinic.noVet).ToString("N")); //vet total
+        salaryPanel.transform.GetChild(9).gameObject.GetComponent<TextMeshProUGUI>().SetText("-Php " + ((2000 * barracks.noRangers) + (3000* clinic.noVet)).ToString("N")); //total salary
+
 
 
 
@@ -118,7 +128,19 @@ public class GameManager : MonoBehaviour
             flag = true;
             StopAllCoroutines();
         }
+
+        Debug.Log(windowClear());
      
+
+
+
+     
+    }
+    void findInjured()
+    {
+        //int rand = Random.Range();
+        Time.timeScale = 0f;
+        injuredPanel.SetActive(true);
     }
 
     public void globalPause() {
@@ -131,7 +153,7 @@ public class GameManager : MonoBehaviour
         if (flag) {
             while (player.playerFund < 0) {
                 flag = false;
-                Debug.LogError("Fund below 0!!!");
+               
                 yield return new WaitForSeconds(5);
                 Time.timeScale = 0f;
                 encounterPanel.SetActive(true);
@@ -152,7 +174,100 @@ public class GameManager : MonoBehaviour
     
     }
 
+    public bool noOtherWindow() {
 
+        
+        if (barracksPanel.activeSelf)
+        {
+            return false;
+
+
+        }
+        else if (clinicPanel.activeSelf)
+        {
+            return false;
+
+        }
+        else if (pausePanel.activeSelf)
+        {
+            return false;
+
+
+
+        }
+        else if (salaryPanel.activeSelf) {
+            return false;
+
+
+        }
+        else if (poachingWindow.activeSelf)
+        {
+            return false;
+
+
+        }
+        else if (deployWindow.activeSelf) {
+            return false;
+
+        }
+        else if (encounterPanel.activeSelf) {
+            return false;
+        }
+        else if (gameover.activeSelf) {
+            return false;
+
+        }
+        else if (buyRanger.activeSelf)
+        {
+            return false;
+
+        }
+        else if (injuredPanel.activeSelf) {
+            return false;
+        }
+
+        else {
+            return true;
+        }
+
+
+
+             
+    }
+
+    public bool windowClear() {
+
+
+        
+         for (int x = 0; x < canvasPanel.transform.GetChild(1).childCount; x++) {
+
+                if (canvasPanel.transform.GetChild(1).GetChild(x).gameObject.activeSelf) {
+                    return false;
+                }
+                
+        }
+
+        int flag = 0;
+        for (int x = 0; x < canvasPanel.transform.childCount; x++ )
+        {
+            if (canvasPanel.transform.GetChild(x).gameObject.activeSelf) {
+                flag++;
+            }
+            
+        }
+
+        if (flag <= 2)
+        {
+            return true;
+        }
+        else {
+            return false;
+        }
+
+        
+
+    
+    }
 
     
 

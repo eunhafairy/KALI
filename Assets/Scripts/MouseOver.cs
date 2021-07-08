@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 public class MouseOver : MonoBehaviour
 {
@@ -14,24 +15,35 @@ public class MouseOver : MonoBehaviour
     }
     void OnMouseOver()
     {
-        animator.SetBool("isHover",true);
-   
-        //If your mouse hovers over the GameObject with the script attached, output this message
-   
-
-        if (Input.GetMouseButtonDown(0)) { 
-            g_obj_barracks_panel.SetActive(true);
-            Debug.Log("Wnt here");
+        GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        //If your mouse hovers over the GameObject
+        if (gm.windowClear())
+        {
+            transform.localScale = new Vector3(0.5f, 0.5f, 1);
         }
+
+
+
     }
     
     void OnMouseExit()
-    { 
-        animator.SetBool("isHover", false);
-        //The mouse is no longer hovering over the GameObject so output this message each frame
+    {
+
+        transform.localScale = new Vector3(0.4528f, 0.4744f, 1);
 
     }
 
+    private void OnMouseUp()
+    {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            GameObject gameManager = GameObject.Find("GameManager");
+            if (gameManager.GetComponent<GameManager>().windowClear()) {
+                g_obj_barracks_panel.SetActive(true);
+            }
+            
+            
+        }
+    }
 
-  
 }

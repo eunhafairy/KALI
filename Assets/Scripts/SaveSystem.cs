@@ -5,12 +5,12 @@ using UnityEngine;
 public static class SaveSystem
 {
 
-    public static void SavePlayer(PlayerData player, BarracksScript barracks) {
+    public static void SavePlayer(PlayerData player, BarracksScript barracks, ClinicScript clinic, WardScript ward) {
 
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + "/playerData.ss";
         FileStream stream = new FileStream(path, FileMode.Create);
-        Data data = new Data(player, barracks);
+        Data data = new Data(player, barracks, clinic, ward);
 
         formatter.Serialize(stream, data);
         stream.Close();

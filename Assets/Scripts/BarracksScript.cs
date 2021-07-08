@@ -11,90 +11,23 @@ public class BarracksScript : MonoBehaviour
     [SerializeField] GameObject progressPrefab, encounterPanel;
     [SerializeField] Button upgradebutton;
     [SerializeField] Transform progressPanel;
+
     public int level, noRangers, no_of_avail, maxRangers;
     public int[] rangerEnergy;
     public int rangerCost, availableRanger;
-    [SerializeField] TextMeshProUGUI tmp_brk_lvl, tmp_no_of_ranger;
-    [SerializeField] GameObject rangers, barracksUpgrade; //prefab reference
-    GameObject[] ranger, progressCard; //objects
+
+    public TextMeshProUGUI tmp_brk_lvl, tmp_no_of_ranger;
+    public GameObject rangers, barracksUpgrade; //prefab reference
+    public GameObject[] ranger, progressCard; //objects
     public PlayerData player;
-    void Start()
-    {
-
-        ranger = new GameObject[6];
-       
-        rangerEnergy = new int[6];
-
-
-        string path = Application.persistentDataPath + "/playerData.ss";
-
-        if (File.Exists(path))
-        {
-            //existing
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.Open);
-
-            Data data = formatter.Deserialize(stream) as Data;
-            stream.Close();
-            level = data.barracksLevel;
-            noRangers = data.noRangers;
-            rangerEnergy = data.rangerEnergy;
-
-            for (int x = 0; x < rangerEnergy.Length; x++) {
-                Debug.Log("Ranger Energy: "+rangerEnergy[x]);
-            }
-            //instantiate rangers prefabs as child based on noRangers
-            for (int x = 0; x < noRangers; x++)
-            {
-                Instantiate(rangers, this.transform);
-                
-            }
-            for (int x = 0; x < noRangers; x++) {
-                transform.GetChild(x).gameObject.GetComponent<RangerScript>().energy = rangerEnergy[x];
-              
-            }
-
-
-        }
-        else
-        {
-            //not existing, set funds and tamaraw number to default.
-            level = 1;
-            noRangers = 1;
-            Instantiate(rangers, this.transform);   
-            ranger[0] = transform.GetChild(0).gameObject;
-
-            rangerEnergy[0] = 100;
-            ranger[0].GetComponent<RangerScript>().energy = 100;
-            
-        }
-
-
-
-        //for ranger's energy progress
-        progressCard = new GameObject[6];
-
-        for (int x = 0; x < noRangers; x++) {
-
-            Instantiate(progressPrefab, progressPanel);
-
-
-        }
-        for (int x = 0; x < noRangers; x++)
-        {
-
-            progressCard[x] = progressPanel.GetChild(x).gameObject;
-            
-        }
-
-
-    }
+ 
 
     // Update is called once per frame
     void Update()
     {
 
-        
+
+        //set upgrade button interactible if minimum lvl requirement reached.
 
         if (level <= player.playerLevel)
         {
@@ -104,9 +37,13 @@ public class BarracksScript : MonoBehaviour
         else {
             upgradebutton.interactable = false;
         }
+
+        //set text mesh pro value
         tmp_brk_lvl.SetText("Barracks (Level "+level+")");
         tmp_no_of_ranger.SetText(getAvailable() + "/" + noRangers);
 
+
+        //set max number of ranger available
         switch (level) {
 
             case 1:
@@ -122,6 +59,7 @@ public class BarracksScript : MonoBehaviour
 
         }
 
+        //set ranger cost based on no of rangers
         switch (noRangers) {
 
             case 1:
@@ -170,7 +108,8 @@ public class BarracksScript : MonoBehaviour
                 noRangers++;
 
                 //instantiate ranger prefab as child
-                Instantiate(rangers, transform);
+                GameObject newRang = Instantiate(rangers, transform);
+                newRang.GetComponent<RangerScript>().energy = 100;
                 Instantiate(progressPrefab, progressPanel);
                 progressCard = new GameObject[6];
                 for (int x = 0; x < noRangers; x++)
@@ -228,9 +167,8 @@ public class BarracksScript : MonoBehaviour
         }
         barracksUpgrade.transform.GetChild(6).gameObject.GetComponent<TextMeshProUGUI>().SetText("Php "+ barrackUpgradeCost.ToString("N"));
 
-
-
     }
+
     public void upgradeBarracks() {
 
         switch (level) {
@@ -302,6 +240,7 @@ public class BarracksScript : MonoBehaviour
             } 
 
         }
+        no_of_avail = ctr;
         return ctr;
 
 

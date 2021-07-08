@@ -16,9 +16,11 @@ public class RangerScript : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (energy == 100)
+        if (energy >= 100)
         {
             isReady = true;
+            energy = 100;
+            
         }
         else {
             isReady = false;
@@ -29,9 +31,11 @@ public class RangerScript : MonoBehaviour
     void Regenerate() {
        
         
-        if (!isReady)
+        if (!isReady && energy < 100)
         {
+
             energy++;
+
         }
 
     }

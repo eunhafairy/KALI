@@ -7,7 +7,7 @@ public class poachingAlert : MonoBehaviour
 
     [SerializeField] PlayerData player;
     [SerializeField] BarracksScript barracks;
-    [SerializeField] int rate = 10, deployRate = 10, no_poachers;
+    [SerializeField] int rate = 30, deployRate = 10, no_poachers;
     [SerializeField] GameObject gObj_poach_alert, deployWindow, poachWindow, poachWindowAvail, encounterPanel;
     [SerializeField] bool flag, flag2;
     [SerializeField] TextMeshProUGUI tmp_message;
@@ -40,7 +40,7 @@ public class poachingAlert : MonoBehaviour
         {
             //50% chance to trigger
             int chance = Random.Range(1, 10);
-            Debug.Log("Poacher alert chance: "+chance);
+
             if (chance <= 5)
             {
                 StartCoroutine(timer());

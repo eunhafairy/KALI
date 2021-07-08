@@ -15,12 +15,13 @@ public class PlayerData : MonoBehaviour
     
     private void Start()
     {
+        /*
         string path = Application.persistentDataPath + "/playerData.ss";
         if (File.Exists(path))
         {
             //existing
             BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.Open);
+            FileStream stream = new FileStream(path, FileMode.OpenOrCreate);
 
             Data data = formatter.Deserialize(stream) as Data;
             stream.Close();
@@ -39,6 +40,7 @@ public class PlayerData : MonoBehaviour
             playerExp = 0;
         
         }
+        */
     }
 
     private void Update()
