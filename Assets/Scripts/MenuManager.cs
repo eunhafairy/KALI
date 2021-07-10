@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine.SceneManagement;
 public class MenuManager : MonoBehaviour
 {
-
+    [SerializeField] Animator animator;
     [SerializeField] GameObject continueMenu, newMenu, dialogBox;
     // Start is called before the first frame update
     void Start()
@@ -31,9 +31,7 @@ public class MenuManager : MonoBehaviour
 
     public void loadPlayer() {
 
-        PlayerPrefs.SetInt("isLoad",1);
-        SceneManager.LoadScene(1);
-
+        StartCoroutine(loadGameRoutine());
 
     }
 
@@ -49,9 +47,9 @@ public class MenuManager : MonoBehaviour
         }
         else {
             PlayerPrefs.SetInt("isLoad", 0);
+            StartCoroutine(newGameRoutine());
 
-            //go to scene
-            SceneManager.LoadScene(1);
+
 
         }
 
@@ -59,20 +57,42 @@ public class MenuManager : MonoBehaviour
     }
 
     public void deleteOld() {
+        StartCoroutine(deleteRoutine());
+    }
+    public IEnumerator deleteRoutine() {
 
+        animator.SetTrigger("triggerStart");
+        yield return new WaitForSeconds(2);
         string[] filePaths = Directory.GetFiles(Application.persistentDataPath);
         foreach (string filePath in filePaths)
         {
             File.Delete(filePath);
 
         }
-
+       
         SceneManager.LoadScene(1);
         //go to scene 
+    }
+
+    IEnumerator newGameRoutine() {
+
+        animator.SetTrigger("triggerStart");
+        yield return new WaitForSeconds(2);
+        //go to scene
+        SceneManager.LoadScene(1);
+    }
+    IEnumerator loadGameRoutine() {
+        animator.SetTrigger("triggerStart");
+        yield return new WaitForSeconds(2);
+        PlayerPrefs.SetInt("isLoad", 1);
+        SceneManager.LoadScene(1);
+
     }
 
     public void exitGame() {
         Application.Quit();
     }
+
+    
 
 }

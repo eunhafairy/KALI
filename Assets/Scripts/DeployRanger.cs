@@ -10,9 +10,13 @@ public class DeployRanger : MonoBehaviour
     [SerializeField] TextMeshProUGUI val, successRate;
     [SerializeField] Slider slider;
     [SerializeField] GameObject notif, encounterPanel;
+    Transform audioManager;
     int max;
     bool flag;
-
+    private void Start()
+    {
+        audioManager = GameObject.Find("AudioManager").transform;
+    }
     private void Update()
     {
         max = (int)(100 + ((PlayerPrefs.GetInt("poachers") * 0.15f) * 100));
@@ -20,7 +24,7 @@ public class DeployRanger : MonoBehaviour
         slider.minValue = 1;
         slider.maxValue = PlayerPrefs.GetInt("avail");
         val.SetText(slider.value.ToString());
-        successRate.SetText(success + "% Success Rate (The more you deploy, the chances of success will increase)");
+        successRate.SetText(success + "% Success Rate");
 
     }
 
@@ -39,10 +43,11 @@ public class DeployRanger : MonoBehaviour
         int rand = (int)Random.Range(1, (100 + ((no_poacher * 0.15f) * 100)));
         if (rand <= chance)
         {
+            audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
             //success
             Time.timeScale = 0f;
-            encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Yeehaw!!");
+            encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Success!!");
             encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Your rangers were successful in defending the tamaraws. Cheers!");
             player.playerExp += 200; //player exp
             encounterPanel.SetActive(true);
@@ -53,7 +58,7 @@ public class DeployRanger : MonoBehaviour
             for (int x = 0; x < barracks.noRangers; x++) {
                 if (barracks.transform.GetChild(x).gameObject.GetComponent<RangerScript>().isReady)
                 {
-                    barracks.transform.GetChild(x).gameObject.GetComponent<RangerScript>().energy -= 50;
+                    barracks.transform.GetChild(x).gameObject.GetComponent<RangerScript>().energy -= 20;
                     flagg++;
                 }
 
@@ -66,6 +71,7 @@ public class DeployRanger : MonoBehaviour
         else
         {
             //fail
+            audioManager.GetChild(3).gameObject.GetComponent<AudioSource>().Play();
 
             Debug.LogWarning("Fail! Rolled: " + rand + " out of " + max + ". Roll should be less than or equal to: " + chance);
             //kill tamaraws
@@ -73,8 +79,8 @@ public class DeployRanger : MonoBehaviour
             int toKill = Random.Range(1 * (no_poacher), 3 * no_poacher);
             player.tamarawNumber -= toKill;
             Time.timeScale = 0f;
-            encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("No way!!");
-            encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The poachers won this round... They killed "  + toKill+" tamaraws and drained your ranger's full energy.");
+            encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Failed");
+            encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Your rangers were defeated. Poachers killed "  + toKill+" tamaraws and drained your ranger's full energy.");
             player.playerExp += 50; //player exp
             encounterPanel.SetActive(true);
 

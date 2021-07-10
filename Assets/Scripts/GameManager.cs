@@ -9,31 +9,39 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 public class GameManager : MonoBehaviour
 {
-
+    Transform audioManager;
     [SerializeField] PlayerData player;
     [SerializeField] BarracksScript barracks;
     [SerializeField] ClinicScript clinic;
+    [SerializeField] officeScript office;
     [SerializeField] GameObject[] rangers;
     [SerializeField] GameObject notif, salaryPanel, barracksPanel, expSlider, encounterPanel, clinicPanel, pausePanel, poachingWindow, deployWindow, buyRanger, gameover, injuredPanel, canvasPanel;
     [SerializeField] TextMeshProUGUI tmp_plyerLvl;
     [SerializeField] WardScript ward;
+    [SerializeField] DragCamera2D drag;
     [SerializeField] int injuredRate;
     bool flag;
     private void Start()
     {
+        audioManager = GameObject.Find("AudioManager").transform;
         injuredPanel.SetActive(false);
         salaryPanel.SetActive(false);
         flag = true;
         notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Hello!");
-        injuredRate = 10;
+        injuredRate = 30;
         InvokeRepeating("findInjured", 10, injuredRate);
         InvokeRepeating("salary",20,50);
     }
     public void SavePlayer() {
 
-        SaveSystem.SavePlayer(player, barracks, clinic, ward);
+        SaveSystem.SavePlayer(player, barracks, clinic, ward, office);
 
-    
+        
+        Time.timeScale = 0f;
+        encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Success!");
+        encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The current game progress is saved.");
+        encounterPanel.SetActive(true);
+
     }
 
     public void LoadPlayer() {
@@ -69,8 +77,8 @@ public class GameManager : MonoBehaviour
     public void salary() {
 
         
-        int no_emp = (barracks.noRangers*2000) + (clinic.noVet * 3000);
-
+        int no_emp = (barracks.noRangers*2000) + (clinic.noVet * 3000) + (ward.noWardens * 2000);
+        player.playerExp += 200;
         player.playerFund -= no_emp;
         salaryNotice();
        
@@ -85,7 +93,9 @@ public class GameManager : MonoBehaviour
         salaryPanel.SetActive(true);
         salaryPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Rangers x"+ barracks.noRangers); //ranger number
         salaryPanel.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().SetText("Php "+(2000 * barracks.noRangers).ToString("N")); //ranger total
-        salaryPanel.transform.GetChild(5).gameObject.GetComponent<TextMeshProUGUI>().SetText("Vets x" + barracks.noRangers); //vet number
+        salaryPanel.transform.GetChild(3).gameObject.GetComponent<TextMeshProUGUI>().SetText("Wardens x" + ward.noWardens); //ranger number
+        salaryPanel.transform.GetChild(4).gameObject.GetComponent<TextMeshProUGUI>().SetText("Php " + (2000 * ward.noWardens).ToString("N")); //ranger total
+        salaryPanel.transform.GetChild(5).gameObject.GetComponent<TextMeshProUGUI>().SetText("Vets x" + clinic.noVet); //vet number
         salaryPanel.transform.GetChild(6).gameObject.GetComponent<TextMeshProUGUI>().SetText("Php " + (3000 * clinic.noVet).ToString("N")); //vet total
         salaryPanel.transform.GetChild(9).gameObject.GetComponent<TextMeshProUGUI>().SetText("-Php " + ((2000 * barracks.noRangers) + (3000* clinic.noVet)).ToString("N")); //total salary
 
@@ -96,6 +106,13 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (windowClear()) {
+            drag.enabled = true;
+        }
+        else { 
+            drag.enabled = false;
+
+        }
         switch (player.playerLevel) {
 
             case 1:
@@ -130,17 +147,39 @@ public class GameManager : MonoBehaviour
         }
 
         Debug.Log(windowClear());
-     
 
+        if (player.tamarawNumber < 1) {
+            gameOver();
+        }
 
 
      
     }
     void findInjured()
     {
-        //int rand = Random.Range();
+        int rand = Random.Range(1,100);
+        if (rand <= 50 ) {
+            Time.timeScale = 0f;
+            injuredPanel.SetActive(true);
+        }
+       
+        
+    }
+    public void killInjured()
+    {
+        player.tamarawNumber -= 1;
         Time.timeScale = 0f;
-        injuredPanel.SetActive(true);
+        encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Aww...");
+        encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The injured tamaraw died.");
+        encounterPanel.SetActive(true);
+
+    }
+
+
+    void gameOver() {
+        Time.timeScale = 0f;
+        gameover.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Tamaraw became extinct.");
+        gameover.SetActive(true);
     }
 
     public void globalPause() {
@@ -156,7 +195,7 @@ public class GameManager : MonoBehaviour
                
                 yield return new WaitForSeconds(5);
                 Time.timeScale = 0f;
-                encounterPanel.SetActive(true);
+                gameover.SetActive(true);
             }
             
         }
@@ -239,7 +278,7 @@ public class GameManager : MonoBehaviour
 
 
         
-         for (int x = 0; x < canvasPanel.transform.GetChild(1).childCount; x++) {
+      for (int x = 0; x < canvasPanel.transform.GetChild(1).childCount; x++) {
 
                 if (canvasPanel.transform.GetChild(1).GetChild(x).gameObject.activeSelf) {
                     return false;

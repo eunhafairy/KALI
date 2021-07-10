@@ -7,7 +7,7 @@ public class rangerCost : MonoBehaviour
     TextMeshProUGUI message;
     [SerializeField] GameObject barracks;
     void Awake() {
-        message = transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
+        message = transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>();
         message.SetText("Hire additional ranger for" +
             "\nPhp " + barracks.GetComponent<BarracksScript>().rangerCost.ToString("N")+"?");
     

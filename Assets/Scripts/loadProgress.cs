@@ -12,6 +12,7 @@ public class loadProgress : MonoBehaviour
     [SerializeField] GameObject progressPrefab, roomPrefab;
     [SerializeField] Transform progressPanel;
     [SerializeField] WardScript ward;
+    [SerializeField] officeScript office;
     void Start()
     {
 
@@ -97,6 +98,13 @@ public class loadProgress : MonoBehaviour
                 ward.tamarawRecovery[x] = data.tamarawRecovery[x];
             }
 
+            //load office data
+            office.level = data.officeLevel;
+            office.fundAmountRate = data.fundAmountRate;
+            office.fundRate = data.fundRate;
+            office.webinar = data.webinar;
+            office.tarp = data.tarp;
+            office.socialMedia = data.socialMedia;
 
 
         }
@@ -135,6 +143,15 @@ public class loadProgress : MonoBehaviour
             ward.tamarawRecovering = 0;
             Instantiate(ward.warden, ward.transform.GetChild(0));
 
+            //office
+            office.level = 1;
+            office.fundAmountRate = 0.1f;
+            office.fundRate = 0.1f;
+            office.webinar = false;
+            office.tarp = false;
+            office.socialMedia = false;
+
+
 
         }
 
@@ -153,6 +170,18 @@ public class loadProgress : MonoBehaviour
 
             barracks.progressCard[x] = progressPanel.GetChild(x).gameObject;
 
+        }
+
+        switch (barracks.level) {
+            case 1:
+                barracks.GetComponent<SpriteRenderer>().sprite = barracks.lvl1;
+                break;
+            case 2:
+                barracks.GetComponent<SpriteRenderer>().sprite = barracks.lvl2;
+                break;
+            case 3:
+                barracks.GetComponent<SpriteRenderer>().sprite = barracks.lvl3;
+                break;
         }
 
         //clinic scrollview initialization

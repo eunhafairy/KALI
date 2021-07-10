@@ -8,8 +8,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 public class ClinicScript : MonoBehaviour
 {
-
-    public GameObject clinicPanel, barracksPanel, ward, moveToward; //reference to the clinic panel
+    AudioSource hover;
+    public GameObject clinicPanel, barracksPanel, ward, moveToward, audioManager; //reference to the clinic panel
     public int level, noVet, noRooms, noAdmitted, maxAddRoom, maxVet, vetCost, clinicUpgradeCost, healRate; //attributes of clinic
     public int[] tamarawHealth; //health of tamaraws admitted
     public GameObject tamaraw, vet, room, roomCardPrefab; //reference to prefab
@@ -19,16 +19,22 @@ public class ClinicScript : MonoBehaviour
     public Transform roomPanel, buyPanel;
     public Button releaseButton, upgradebutton;
     public bool deathFlag;
-   
+    Vector3 scale;
+    private void Start()
+    {
+        hover = GameObject.Find("AudioManager").transform.GetChild(0).gameObject.GetComponent<AudioSource>();
+        scale = transform.localScale;
+    }
     private void Update()
     {
     
 
-        if (level <= player.playerLevel)
+        if (level < 3 && level <= player.playerLevel)
         {
             upgradebutton.interactable = true;
 
         }
+      
         else
         {
             upgradebutton.interactable = false;
@@ -79,12 +85,12 @@ public class ClinicScript : MonoBehaviour
 
         noAdmitted = getNumberOfAdmitted(); //get the number of admitted tamaraws
         //set  text
-        clinicPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Clinic (Level " + level + ")");
-        clinicPanel.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().SetText(noVet.ToString());
-        clinicPanel.transform.GetChild(6).gameObject.GetComponent<TextMeshProUGUI>().SetText(noAdmitted +"/"+ noRooms.ToString());
+        clinicPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Clinic (Level " + level + ")");
+        clinicPanel.transform.GetChild(3).gameObject.GetComponent<TextMeshProUGUI>().SetText(noVet.ToString());
+        clinicPanel.transform.GetChild(7).gameObject.GetComponent<TextMeshProUGUI>().SetText(noAdmitted +"/"+ noRooms.ToString());
 
         healRate = (int)((noVet * 0.1f) * 100);
-        clinicPanel.transform.GetChild(3).gameObject.GetComponent<TextMeshProUGUI>().SetText("Healing rate: +" + healRate + "%");
+        clinicPanel.transform.GetChild(4).gameObject.GetComponent<TextMeshProUGUI>().SetText("Healing rate: +" + healRate + "%");
 
         for (int x = 0; x < noAdmitted; x++)
         {
@@ -118,7 +124,7 @@ public class ClinicScript : MonoBehaviour
                 player.playerFund -= vetCost;
                 player.playerExp += 200;
                 noVet++;
-
+                audioManager.transform.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
                 //instantiate vetPrefab
                 Instantiate(vet, transform.GetChild(0).transform);
 
@@ -152,27 +158,30 @@ public class ClinicScript : MonoBehaviour
         GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         //If your mouse hovers over the GameObject
         if (gm.windowClear()) {
-            transform.localScale = new Vector3(0.5f, 0.5f, 1);
+            transform.localScale = new Vector3(scale.x + 0.2f, scale.y + 0.2f, 1);
+
+            if (hover.isPlaying) hover.Stop();
+            hover.Play();
+
         }
-        
-
-  
-
-
 
     }
     void OnMouseExit()
     {
-
-        transform.localScale = new Vector3(0.4528f, 0.4744f, 1);
-
+        transform.localScale = scale;
 
     }
 
     //for click
     private void OnMouseUp()
     {
-        if (EventSystem.current.IsPointerOverGameObject()) {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            Debug.Log("Clicked on the UI");
+        }
+
+        else
+      {
 
             GameObject gameManager = GameObject.Find("GameManager");
             if (gameManager.GetComponent<GameManager>().windowClear()) clinicPanel.SetActive(true);
@@ -190,7 +199,7 @@ public class ClinicScript : MonoBehaviour
 
     }
     public void buyMessage() {
-        buyPanel.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Buy additional veterinarian for Php "+ vetCost.ToString("N")+"?");
+        buyPanel.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().SetText("Buy additional veterinarian for Php "+ vetCost.ToString("N")+"?");
     }
 
     public void takeInjured() {
@@ -198,7 +207,8 @@ public class ClinicScript : MonoBehaviour
         //check if full
         if (noAdmitted < noRooms)
         {
-           
+
+            player.playerExp += 200;
 
             GameObject newTamaraw = Instantiate(tamaraw, transform.GetChild(2));
             newTamaraw.GetComponent<TamarawScript>().health = Random.Range(1,50);
@@ -207,6 +217,7 @@ public class ClinicScript : MonoBehaviour
 
                 tamaraws[x] = transform.GetChild(2).GetChild(x).gameObject;
             }
+            audioManager.transform.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
             Time.timeScale = 0f;
             warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Success!");
@@ -214,6 +225,8 @@ public class ClinicScript : MonoBehaviour
             warningPanel.SetActive(true);
         }
         else {
+            audioManager.transform.GetChild(3).gameObject.GetComponent<AudioSource>().Play();
+
             Time.timeScale = 0f;
             warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Warning");
             warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Room is full. Upgrade the Clinic to acquire more rooms!");
@@ -230,6 +243,8 @@ public class ClinicScript : MonoBehaviour
         {
             //upgrade clinic
             level++;
+            player.playerExp += 400;
+
             switch (level) {
                 case 2:
                     noRooms = 8;
@@ -251,6 +266,8 @@ public class ClinicScript : MonoBehaviour
                 
             }
             Debug.LogWarning("No. Rooms: "+noRooms + ", No. of roomCardPrefab in panel: " + roomPanel.transform.childCount);
+            audioManager.transform.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
+
             Time.timeScale = 0f;
             player.playerFund -= clinicUpgradeCost;
             warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Success!");
@@ -267,19 +284,14 @@ public class ClinicScript : MonoBehaviour
         }
         else {
             //not enough funds
-            if (player.playerFund < clinicUpgradeCost)
-            {
+           
+                audioManager.transform.GetChild(3).gameObject.GetComponent<AudioSource>().Play();
+
                 Time.timeScale = 0f;
                 warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Failed!");
                 warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Not enough funds.");
                 warningPanel.SetActive(true);
-            }
-            else {
-                Time.timeScale = 0f;
-                warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Failed!");
-                warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Error occured.");
-                warningPanel.SetActive(true);
-            }
+          
             
 
         }
@@ -351,6 +363,7 @@ public class ClinicScript : MonoBehaviour
         int chance = (int) ((noVet * 0.1f) * 100);
         if (rand <= chance)
         {
+            player.playerExp += 500;
             Time.timeScale = 0f;
             moveToward.SetActive(true);
             _roomCard.transform.GetChild(4).gameObject.SetActive(false);
@@ -363,6 +376,7 @@ public class ClinicScript : MonoBehaviour
 
         
         else {
+            audioManager.transform.GetChild(3).gameObject.GetComponent<AudioSource>().Play();
 
             player.tamarawNumber -= 1;
             Time.timeScale = 0f;
@@ -385,24 +399,29 @@ public class ClinicScript : MonoBehaviour
 
     public void releaseAgad() {
        
-        int rand = Random.Range(1, 2);
+        int rand = Random.Range(1, 100);
 
-        switch (rand)
+        if (rand <= 30)
         {
-            case 1:
-                Time.timeScale = 0f;
-                warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Yehey!");
-                warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The tamaraw is released and it managed to survived.");
-                warningPanel.SetActive(true);
-                break;
-            case 2:
-                player.tamarawNumber -= 1;
-                Time.timeScale = 0f;
-                warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Oh no!");
-                warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The tamaraw is released but it did not survived.");
-                warningPanel.SetActive(true);
-                break;
+            player.playerExp += 400;
+            audioManager.transform.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
+
+            Time.timeScale = 0f;
+            warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Yehey!");
+            warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The tamaraw is released and it managed to survived.");
+            warningPanel.SetActive(true);
+
         }
+        else{
+            audioManager.transform.GetChild(3).gameObject.GetComponent<AudioSource>().Play();
+
+            Time.timeScale = 0f;
+            warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Oh no!");
+            warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The tamaraw is released but it did not survived.");
+       
+
+        }
+
 
     }
 
@@ -410,8 +429,12 @@ public class ClinicScript : MonoBehaviour
 
         if (ward.GetComponent<WardScript>().tamarawRecovering < ward.GetComponent<WardScript>().maxCapacity)
         {
+            player.playerExp += 200;
+
             GameObject newTam = Instantiate(tamaraw, ward.transform.GetChild(1));
             newTam.GetComponent<TamarawScript>().recovery = Random.Range(50, 100);
+            audioManager.transform.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
+
             Time.timeScale = 0f;
             warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Moved");
             warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The tamaraw is moved to the recovery ward.");
@@ -423,14 +446,19 @@ public class ClinicScript : MonoBehaviour
 
             switch (rand) {
                 case 1:
+                    audioManager.transform.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
+
                     Time.timeScale = 0f;
                     warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Full!");
                     warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The ward is full. The tamaraw is released and it managed to survived.");
                     warningPanel.SetActive(true);
                     break;
                 case 2:
+                    audioManager.transform.GetChild(3).gameObject.GetComponent<AudioSource>().Play();
+
                     player.tamarawNumber -= 1;
                     Time.timeScale = 0f;
+                    audioManager.transform.GetChild(3).gameObject.GetComponent<AudioSource>().Play();
                     warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Full!");
                     warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The ward is full. The tamaraw is released but it did not survived.");
                     warningPanel.SetActive(true);

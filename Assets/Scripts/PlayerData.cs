@@ -53,7 +53,7 @@ public class PlayerData : MonoBehaviour
 
 
         }
-        else if (playerExp > 1000 && playerExp <= 4000) { 
+        else if (playerExp > 4000 && playerExp <= 6000) { 
             playerLevel = 3;
 
 

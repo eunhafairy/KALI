@@ -11,7 +11,7 @@ public class poachingAlert : MonoBehaviour
     [SerializeField] GameObject gObj_poach_alert, deployWindow, poachWindow, poachWindowAvail, encounterPanel;
     [SerializeField] bool flag, flag2;
     [SerializeField] TextMeshProUGUI tmp_message;
-    
+    [SerializeField] Transform audioManager;
 
     void Start()
     {
@@ -57,9 +57,12 @@ public class poachingAlert : MonoBehaviour
     {
         flag = false; 
         gObj_poach_alert.SetActive(true);
-        yield return new WaitForSeconds(5);
+        audioManager.transform.GetChild(4).gameObject.GetComponent<AudioSource>().Play();
 
-        //after 5 seconds if not clicked, decrease tamaraw population and set game object to false
+        yield return new WaitForSeconds(10);
+        audioManager.transform.GetChild(4).gameObject.GetComponent<AudioSource>().Stop();
+
+        //after 10 seconds if not clicked, decrease tamaraw population and set game object to false
         gObj_poach_alert.SetActive(false);
         
         flag2 = false;
@@ -83,7 +86,8 @@ public class poachingAlert : MonoBehaviour
 
     public void isClickedConfirm() {
         
-       
+        audioManager.transform.GetChild(4).gameObject.GetComponent<AudioSource>().Stop();
+
         int avail = 0;
         // Time.timeScale = 1f;
         //algorithm here
@@ -107,6 +111,8 @@ public class poachingAlert : MonoBehaviour
         else {
 
             //warning here
+            audioManager.transform.GetChild(3).gameObject.GetComponent<AudioSource>().Stop();
+
             poachWindowAvail.SetActive(true);
             poachWindow.SetActive(false);
             Debug.LogError("No available rangers!");
@@ -123,8 +129,9 @@ public class poachingAlert : MonoBehaviour
     }
 
     public void warningClicked() {
-      
-            Time.timeScale = 0f;
+            audioManager.transform.GetChild(4).gameObject.GetComponent<AudioSource>().Stop();
+
+        Time.timeScale = 0f;
             int rand = Random.Range(1,3);
             no_poachers = rand;
             tmp_message.SetText("There are "+ no_poachers + " poacher/s. Deploy rangers?");

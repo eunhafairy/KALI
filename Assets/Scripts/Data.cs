@@ -30,8 +30,17 @@ public class Data
     public int[] tamarawRecovery;
     public int tamarawRecovering;
 
-    public Data(PlayerData player, BarracksScript barracks, ClinicScript clinic, WardScript ward) {
+    //office
+    public int officeLevel;
+    public float fundAmountRate;
+    public float fundRate;
+    public bool webinar;
+    public bool tarp;
+    public bool socialMedia;
+
+    public Data(PlayerData player, BarracksScript barracks, ClinicScript clinic, WardScript ward, officeScript office) {
         
+        //ranger
         rangerEnergy = new int[6];
         fund = player.playerFund;
         tamarawNumber = player.tamarawNumber;
@@ -44,6 +53,7 @@ public class Data
             rangerEnergy[x] = barracks.rangerEnergy[x];
         }
 
+        //clinic
         tamarawHealth = new int[12];
         clinicLevel = clinic.level;
         noVet = clinic.noVet;
@@ -55,6 +65,7 @@ public class Data
 
         }
 
+        //ward
         tamarawRecovery = new int[12];
         wardLevel = ward.level;
         noWardens = ward.noWardens;
@@ -64,7 +75,15 @@ public class Data
             tamarawRecovery[x] = ward.tamarawRecovery[x];
         }
 
-    }
+        //office
+        officeLevel = office.level;
+        fundAmountRate = office.fundAmountRate;
+        fundRate = office.fundRate;
+        webinar = office.webinar;
+        tarp = office.tarp;
+        socialMedia = office.socialMedia;
+
+}
 
 
 }
