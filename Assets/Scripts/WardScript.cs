@@ -19,9 +19,12 @@ public class WardScript : MonoBehaviour
     public GameObject[] recoveryCardArr;
     public PlayerData player;
     [SerializeField] Button upgradeBtn;
+    [SerializeField] GameObject wardenField, wardenFieldPrefab, tamPanel;
+    Vector3 scale;
     // Start is called before the first frame update
     void Start()
     {
+        scale = transform.localScale;
         hover = GameObject.Find("AudioManager").transform.GetChild(0).gameObject.GetComponent<AudioSource>();
         wardPanel.SetActive(false);
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -92,7 +95,7 @@ public class WardScript : MonoBehaviour
 
         }
         healRate = (int)((noWardens * 0.1f) * 100);
-        wardPanel.transform.GetChild(6).gameObject.GetComponent<TextMeshProUGUI>().SetText(tamarawRecovering + "/"+maxCapacity);
+        wardPanel.transform.GetChild(6).gameObject.GetComponent<TextMeshProUGUI>().SetText((maxCapacity - tamarawRecovering) + "/"+maxCapacity);
         wardPanel.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().SetText(noWardens.ToString());
         wardPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Ward (Level " + level + ")");
         wardPanel.transform.GetChild(3).gameObject.GetComponent<TextMeshProUGUI>().SetText("Recovery rate: +" + healRate + "%");
@@ -127,7 +130,7 @@ public class WardScript : MonoBehaviour
 
         else if (gm.windowClear()) {
             
-            transform.localScale = new Vector3(0.5f, 0.5f, 1);
+            transform.localScale = new Vector3(scale.x +0.3f, scale.y + 0.3f, 1);
             if (hover.isPlaying) hover.Stop();
             hover.Play();
 
@@ -138,7 +141,7 @@ public class WardScript : MonoBehaviour
     private void OnMouseExit()
     {
 
-        if (gm.windowClear()) transform.localScale = new Vector3(0.4528f, 0.4744f, 1);
+        if (gm.windowClear()) transform.localScale = scale;
     }
 
     private int getTamarawNumber(){
@@ -198,10 +201,12 @@ public class WardScript : MonoBehaviour
         _recoveryCard.transform.GetChild(2).gameObject.SetActive(true);
         _recoveryCard.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Recovering");
         Destroy(transform.GetChild(1).GetChild(index).gameObject);
+        player.tamarawNumber++;
         Time.timeScale = 0f;
         warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Yehey!");
         warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The tamaraw has been freed.");
         warningPanel.SetActive(true);
+        Destroy(tamPanel.transform.GetChild(0).gameObject);
     }
 
     public void upgradeWard()
@@ -270,6 +275,7 @@ public class WardScript : MonoBehaviour
 
                 noWardens++;
                 Instantiate(warden, transform.GetChild(0));
+                Instantiate(wardenFieldPrefab, wardenField.transform);
                 Time.timeScale = 0f;
                 warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Success");
                 warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("+1 Warden.");

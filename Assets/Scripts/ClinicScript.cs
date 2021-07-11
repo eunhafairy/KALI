@@ -14,12 +14,13 @@ public class ClinicScript : MonoBehaviour
     public int[] tamarawHealth; //health of tamaraws admitted
     public GameObject tamaraw, vet, room, roomCardPrefab; //reference to prefab
     public GameObject[] roomCard, tamaraws;
-    [SerializeField] GameObject warningPanel, upgradePanel;
+    [SerializeField] GameObject warningPanel, upgradePanel, tamField, tamFieldPanel;
     [SerializeField] PlayerData player;
     public Transform roomPanel, buyPanel;
     public Button releaseButton, upgradebutton;
     public bool deathFlag;
     Vector3 scale;
+    [SerializeField] Sprite lvl1, lvl2, lvl3;
     private void Start()
     {
         hover = GameObject.Find("AudioManager").transform.GetChild(0).gameObject.GetComponent<AudioSource>();
@@ -48,17 +49,21 @@ public class ClinicScript : MonoBehaviour
                noRooms = 4;
                 maxVet = 2;
                 clinicUpgradeCost = 10000;
+                GetComponent<SpriteRenderer>().sprite = lvl1;
                 break;
             case 2:
                 noRooms = 8;
                 maxVet = 4;
                 clinicUpgradeCost = 15000;
+                GetComponent<SpriteRenderer>().sprite = lvl2;
 
                 break;
             case 3:
                 clinicUpgradeCost = 20000;
                 noRooms = 12;
                 maxVet = 6;
+                GetComponent<SpriteRenderer>().sprite = lvl3;
+
                 break;
         }
 
@@ -87,7 +92,7 @@ public class ClinicScript : MonoBehaviour
         //set  text
         clinicPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Clinic (Level " + level + ")");
         clinicPanel.transform.GetChild(3).gameObject.GetComponent<TextMeshProUGUI>().SetText(noVet.ToString());
-        clinicPanel.transform.GetChild(7).gameObject.GetComponent<TextMeshProUGUI>().SetText(noAdmitted +"/"+ noRooms.ToString());
+        clinicPanel.transform.GetChild(7).gameObject.GetComponent<TextMeshProUGUI>().SetText( (noRooms - noAdmitted) +"/"+ noRooms.ToString());
 
         healRate = (int)((noVet * 0.1f) * 100);
         clinicPanel.transform.GetChild(4).gameObject.GetComponent<TextMeshProUGUI>().SetText("Healing rate: +" + healRate + "%");
@@ -158,7 +163,7 @@ public class ClinicScript : MonoBehaviour
         GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         //If your mouse hovers over the GameObject
         if (gm.windowClear()) {
-            transform.localScale = new Vector3(scale.x + 0.2f, scale.y + 0.2f, 1);
+            transform.localScale = new Vector3(scale.x + 0.1f, scale.y + 0.1f, 1);
 
             if (hover.isPlaying) hover.Stop();
             hover.Play();
@@ -435,6 +440,7 @@ public class ClinicScript : MonoBehaviour
             newTam.GetComponent<TamarawScript>().recovery = Random.Range(50, 100);
             audioManager.transform.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
+            Instantiate(tamField, tamFieldPanel.transform);
             Time.timeScale = 0f;
             warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Moved");
             warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("The tamaraw is moved to the recovery ward.");

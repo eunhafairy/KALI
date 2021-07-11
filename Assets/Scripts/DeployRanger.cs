@@ -10,17 +10,23 @@ public class DeployRanger : MonoBehaviour
     [SerializeField] TextMeshProUGUI val, successRate;
     [SerializeField] Slider slider;
     [SerializeField] GameObject notif, encounterPanel;
+    [SerializeField] researchScript research;
     Transform audioManager;
     int max;
+    float perChance;
     bool flag;
     private void Start()
     {
+        research = GameObject.Find("Research").GetComponent<researchScript>();
+        perChance = 0.11f;
         audioManager = GameObject.Find("AudioManager").transform;
     }
     private void Update()
     {
+
+        if (research.native) perChance = 0.26f;
         max = (int)(100 + ((PlayerPrefs.GetInt("poachers") * 0.15f) * 100));
-        int success = (int)((((slider.value * 0.11f) * 100) / max) * 100);
+        int success = (int)((((slider.value * perChance) * 100) / max) * 100);
         slider.minValue = 1;
         slider.maxValue = PlayerPrefs.GetInt("avail");
         val.SetText(slider.value.ToString());
@@ -36,7 +42,7 @@ public class DeployRanger : MonoBehaviour
 
 
         //per ranger, success rate is 11%
-        int chance = (int)((no_ranger * 0.11f) * 100);
+        int chance = (int)((no_ranger * perChance) * 100);
 
 
 

@@ -7,7 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine.UI;
 public class BarracksScript : MonoBehaviour
 {
-    
+    [SerializeField] GameObject rangerField, rangerFieldPrefab;
     [SerializeField] GameObject progressPrefab, encounterPanel, audioManager;
     [SerializeField] Button upgradebutton;
     [SerializeField] Transform progressPanel;
@@ -16,7 +16,7 @@ public class BarracksScript : MonoBehaviour
     public int level, noRangers, no_of_avail, maxRangers;
     public int[] rangerEnergy;
     public int rangerCost, availableRanger;
-
+   
     public TextMeshProUGUI tmp_brk_lvl, tmp_no_of_ranger;
     public GameObject rangers, barracksUpgrade; //prefab reference
     public GameObject[] ranger, progressCard; //objects
@@ -24,12 +24,13 @@ public class BarracksScript : MonoBehaviour
 
     private void Start()
     {
+    
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
     }
     // Update is called once per frame
     void Update()
     {
-
+       
 
         //set upgrade button interactible if minimum lvl requirement reached.
 
@@ -130,6 +131,10 @@ public class BarracksScript : MonoBehaviour
                     progressCard[x] = progressPanel.GetChild(x).gameObject;
 
                 }
+
+                //add ranger on the field
+                Instantiate(rangerFieldPrefab, rangerField.transform);
+
                 audioManager.transform.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
                 Time.timeScale = 0f;
                 encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Success");

@@ -9,32 +9,38 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 public class GameManager : MonoBehaviour
 {
-    Transform audioManager;
+    [SerializeField] researchScript research;
+    [SerializeField] Transform audioManager;
     [SerializeField] PlayerData player;
     [SerializeField] BarracksScript barracks;
     [SerializeField] ClinicScript clinic;
     [SerializeField] officeScript office;
     [SerializeField] GameObject[] rangers;
-    [SerializeField] GameObject notif, salaryPanel, barracksPanel, expSlider, encounterPanel, clinicPanel, pausePanel, poachingWindow, deployWindow, buyRanger, gameover, injuredPanel, canvasPanel;
+    [SerializeField] GameObject notif, salaryPanel, barracksPanel, expSlider, encounterPanel, clinicPanel, pausePanel, poachingWindow, deployWindow, buyRanger, gameover, injuredPanel, canvasPanel, win;
     [SerializeField] TextMeshProUGUI tmp_plyerLvl;
     [SerializeField] WardScript ward;
     [SerializeField] DragCamera2D drag;
-    [SerializeField] int injuredRate;
+   
+    private float injuredRate;
+    bool isPaused;
     bool flag;
     private void Start()
     {
+        isPaused = false;
         audioManager = GameObject.Find("AudioManager").transform;
         injuredPanel.SetActive(false);
         salaryPanel.SetActive(false);
         flag = true;
         notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Hello!");
-        injuredRate = 30;
+
+        injuredRate = 35;
+        if (research.scout) injuredRate -= (35 * 0.15f);
         InvokeRepeating("findInjured", 10, injuredRate);
         InvokeRepeating("salary",20,50);
     }
     public void SavePlayer() {
 
-        SaveSystem.SavePlayer(player, barracks, clinic, ward, office);
+        SaveSystem.SavePlayer(player, barracks, clinic, ward, office, research);
 
         
         Time.timeScale = 0f;
@@ -106,6 +112,11 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (player.tamarawNumber >= 200) {
+            Time.timeScale = 0f;
+            winGame();
+
+        }
         if (windowClear()) {
             drag.enabled = true;
         }
@@ -152,14 +163,51 @@ public class GameManager : MonoBehaviour
             gameOver();
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (isPaused)
+            {
+                resumeGame();
+            }
+            else { 
+                pauseGame();
 
+            }
+        }
      
+    }
+
+    public void winGame() {
+        Time.timeScale = 0f;
+        deleteFiles();
+        win.SetActive(true);
+
+    }
+
+    public void resumeGame() {
+        for (int x = 0; x < audioManager.childCount; x++)
+        {
+            audioManager.GetChild(x).gameObject.GetComponent<AudioSource>().volume = 0.8f;
+        }
+        isPaused = false;
+        pausePanel.SetActive(false);
+        Time.timeScale = 1f;
+    }
+    public void pauseGame() {
+
+        for (int x= 0; x < audioManager.childCount; x++) {
+            audioManager.GetChild(x).gameObject.GetComponent<AudioSource>().volume = 0.3f;
+        }
+
+        isPaused = true;
+        pausePanel.SetActive(true);
+        Time.timeScale = 0f;
+
     }
     void findInjured()
     {
         int rand = Random.Range(1,100);
         if (rand <= 50 ) {
-            Time.timeScale = 0f;
+            
             injuredPanel.SetActive(true);
         }
        
@@ -193,7 +241,7 @@ public class GameManager : MonoBehaviour
             while (player.playerFund < 0) {
                 flag = false;
                
-                yield return new WaitForSeconds(5);
+                yield return new WaitForSeconds(10);
                 Time.timeScale = 0f;
                 gameover.SetActive(true);
             }
@@ -306,6 +354,16 @@ public class GameManager : MonoBehaviour
         
 
     
+    }
+
+    public void playerLevel() {
+
+        audioManager.transform.GetChild(7).gameObject.GetComponent<AudioSource>().Play();
+        Time.timeScale = 0f;
+        encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Level up");
+        encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("You have leveled up to Level " + player.playerLevel);
+        encounterPanel.SetActive(true);
+
     }
 
     

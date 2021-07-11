@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class RangerScript : MonoBehaviour
 {
+    BarracksScript barracks;
     public bool isReady;
     public int energy;
+    int rate;
     void Awake()
     {
+        rate = 1;
+        barracks = GameObject.Find("Barracks").GetComponent<BarracksScript>();
        // isReady = true;
        // energy = 100;
         InvokeRepeating("Regenerate", 0, 1);
@@ -33,8 +37,8 @@ public class RangerScript : MonoBehaviour
         
         if (!isReady && energy < 100)
         {
-
-            energy++;
+            rate = 1 + (barracks.level / 2);
+            energy+= rate ;
 
         }
 

@@ -12,7 +12,9 @@ public class PlayerData : MonoBehaviour
     public int tamarawNumber;
     public int playerLevel;
     public int playerExp;
-    
+    public bool levelFlag2;
+    public bool levelFlag3;
+
     private void Start()
     {
         /*
@@ -48,19 +50,39 @@ public class PlayerData : MonoBehaviour
         if (playerExp <= 1000) {
             playerLevel = 1;
         }
-        else if (playerExp > 1000 && playerExp <= 4000) { 
+        else if (playerExp > 1000 && playerExp <= 4000) {
+          
             playerLevel = 2;
+            if (levelFlag2) levelUp2();
+           
 
 
         }
         else if (playerExp > 4000 && playerExp <= 6000) { 
             playerLevel = 3;
+            if (levelFlag3) levelUp3();
 
 
         }
-    
+
 
     }
 
+    private void levelUp2() {
+        //do something
+        GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gm.playerLevel();
+        Debug.LogWarning("level up 2");
+        levelFlag2 = false;
+    }
+    private void levelUp3()
+    {
+        //do something
+        GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gm.playerLevel();
+        Debug.LogWarning("level up 2");
+
+        levelFlag3 = false;
+    }
 
 }

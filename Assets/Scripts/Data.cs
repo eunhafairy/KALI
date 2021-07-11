@@ -10,6 +10,8 @@ public class Data
     public int tamarawNumber;
     public int playerLevel;
     public int playerExp;
+    public bool levelFlag2;
+    public bool levelFlag3;
 
     //barracks
     public int barracksLevel;
@@ -38,7 +40,11 @@ public class Data
     public bool tarp;
     public bool socialMedia;
 
-    public Data(PlayerData player, BarracksScript barracks, ClinicScript clinic, WardScript ward, officeScript office) {
+    //research
+    public int researchLevel;
+    public bool native, scout, artificial;
+
+    public Data(PlayerData player, BarracksScript barracks, ClinicScript clinic, WardScript ward, officeScript office, researchScript research) {
         
         //ranger
         rangerEnergy = new int[6];
@@ -46,6 +52,9 @@ public class Data
         tamarawNumber = player.tamarawNumber;
         playerLevel = player.playerLevel;
         playerExp = player.playerExp;
+        levelFlag2 = player.levelFlag2;
+        levelFlag3 = player.levelFlag3;
+
 
         barracksLevel = barracks.level;
         noRangers = barracks.noRangers;
@@ -82,6 +91,14 @@ public class Data
         webinar = office.webinar;
         tarp = office.tarp;
         socialMedia = office.socialMedia;
+
+
+        //research
+        researchLevel = research.level;
+        native = research.native;
+        scout = research.scout;
+        artificial = research.artificial;
+
 
 }
 

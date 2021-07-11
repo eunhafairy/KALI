@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 public class loadProgress : MonoBehaviour
 {
 
+    [SerializeField] researchScript research;
     [SerializeField] PlayerData player;
     [SerializeField] BarracksScript barracks;
     [SerializeField] ClinicScript clinic;
@@ -13,6 +14,8 @@ public class loadProgress : MonoBehaviour
     [SerializeField] Transform progressPanel;
     [SerializeField] WardScript ward;
     [SerializeField] officeScript office;
+    [SerializeField] GameObject rangerField, rangerFieldPrefab, wardenField, wardenFieldPrefab, tamField, tamFieldPanel;
+
     void Start()
     {
 
@@ -45,6 +48,9 @@ public class loadProgress : MonoBehaviour
             player.tamarawNumber = data.tamarawNumber;
             player.playerLevel = data.playerLevel;
             player.playerExp = data.playerExp;
+            player.levelFlag2 = data.levelFlag2;
+            player.levelFlag3 = data.levelFlag3;
+
 
             //load barracks data
             barracks.level = data.barracksLevel;
@@ -106,7 +112,11 @@ public class loadProgress : MonoBehaviour
             office.tarp = data.tarp;
             office.socialMedia = data.socialMedia;
 
-
+            //load research data
+            research.level = data.researchLevel;
+            research.native = data.native;
+            research.scout = data.scout;
+            research.artificial = data.artificial;
         }
 
         else {
@@ -117,6 +127,9 @@ public class loadProgress : MonoBehaviour
             player.tamarawNumber = 100;
             player.playerLevel = 1;
             player.playerExp = 0;
+            player.levelFlag2 = true;
+            player.levelFlag3 = true;
+
 
             //barracks
             barracks.level = 1;
@@ -151,7 +164,11 @@ public class loadProgress : MonoBehaviour
             office.tarp = false;
             office.socialMedia = false;
 
-
+            //research
+            research.level = 1;
+            research.native = false;
+            research.scout = false;
+            research.artificial = false;
 
         }
 
@@ -184,6 +201,14 @@ public class loadProgress : MonoBehaviour
                 break;
         }
 
+        //rangers init
+
+        for (int x = 0; x < barracks.noRangers;x++) {
+            Instantiate(rangerFieldPrefab, rangerField.transform);
+        }
+        
+
+
         //clinic scrollview initialization
 
         for (int x = 0; x < clinic.noRooms; x++) {
@@ -213,9 +238,16 @@ public class loadProgress : MonoBehaviour
             GameObject newTam = Instantiate(ward.tamaraw, ward.transform.GetChild(1));
             newTam.GetComponent<TamarawScript>().recovery = ward.tamarawRecovery[x];
         }
-        
+        for (int x = 0; x < ward.noWardens; x++)
+        {
+            Instantiate(wardenFieldPrefab, wardenField.transform);
+        }
+        for (int x = 0; x < ward.tamarawRecovering; x++)
+        {
+            Instantiate(tamField, tamFieldPanel.transform);
+           
+        }
 
-        
     }
 
 

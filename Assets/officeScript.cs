@@ -58,7 +58,13 @@ public class officeScript : MonoBehaviour
           
 
                 officeScrollPanel.GetChild(1).GetChild(3).GetComponent<Image>().sprite = lockSprite;
+                officeScrollPanel.GetChild(1).GetChild(4).gameObject.SetActive(false);
+                officeScrollPanel.GetChild(1).GetChild(5).gameObject.SetActive(true);
+
                 officeScrollPanel.GetChild(2).GetChild(3).GetComponent<Image>().sprite = lockSprite;
+                officeScrollPanel.GetChild(2).GetChild(4).gameObject.SetActive(false);
+                officeScrollPanel.GetChild(2).GetChild(5).gameObject.SetActive(true);
+
 
 
                 break;
@@ -67,9 +73,12 @@ public class officeScript : MonoBehaviour
                 if(!webinar) officeScrollPanel.GetChild(1).GetChild(4).GetComponent<Button>().interactable = true;
                 if(!socialMedia) officeScrollPanel.GetChild(2).GetChild(4).GetComponent<Button>().interactable = false;
 
-
+                officeScrollPanel.GetChild(1).GetChild(4).gameObject.SetActive(true);
+                officeScrollPanel.GetChild(1).GetChild(5).gameObject.SetActive(false);
                 officeScrollPanel.GetChild(1).GetChild(3).GetComponent<Image>().sprite = webSprite;
                 officeScrollPanel.GetChild(2).GetChild(3).GetComponent<Image>().sprite = lockSprite;
+                officeScrollPanel.GetChild(2).GetChild(4).gameObject.SetActive(false);
+                officeScrollPanel.GetChild(2).GetChild(5).gameObject.SetActive(true);
                 break;
             case 3:
                 upgradeCost = 8000;
@@ -79,6 +88,8 @@ public class officeScript : MonoBehaviour
 
                 officeScrollPanel.GetChild(1).GetChild(3).GetComponent<Image>().sprite = webSprite;
                 officeScrollPanel.GetChild(2).GetChild(3).GetComponent<Image>().sprite = socMedSprite;
+                officeScrollPanel.GetChild(2).GetChild(4).gameObject.SetActive(true);
+                officeScrollPanel.GetChild(2).GetChild(5).gameObject.SetActive(false);
                 break;
 
         }
@@ -87,19 +98,29 @@ public class officeScript : MonoBehaviour
         if (tarp) {
             officeScrollPanel.GetChild(0).GetChild(4).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Invested");
             officeScrollPanel.GetChild(0).GetChild(4).GetComponent<Button>().interactable = false;
+          
+
 
         }
         if (webinar)
         {
             officeScrollPanel.GetChild(1).GetChild(4).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Invested");
             officeScrollPanel.GetChild(1).GetChild(4).GetComponent<Button>().interactable = false;
+            officeScrollPanel.GetChild(1).GetChild(5).gameObject.SetActive(false);
+
+            officeScrollPanel.GetChild(1).GetChild(4).gameObject.SetActive(true);
+            officeScrollPanel.GetChild(1).GetChild(5).gameObject.SetActive(false);
+
 
         }
         if (socialMedia)
         {
             officeScrollPanel.GetChild(2).GetChild(4).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Invested");
             officeScrollPanel.GetChild(2).GetChild(4).GetComponent<Button>().interactable = false;
+            officeScrollPanel.GetChild(2).GetChild(5).gameObject.SetActive(false);
 
+            officeScrollPanel.GetChild(2).GetChild(4).gameObject.SetActive(true);
+            officeScrollPanel.GetChild(2).GetChild(5).gameObject.SetActive(false);
         }
 
         //set texts
@@ -129,7 +150,7 @@ public class officeScript : MonoBehaviour
             return;
         }
         else if (gm.windowClear()) { 
-            transform.localScale = new Vector3(scale.x + 0.2f, scale.y + 0.2f, 1);
+            transform.localScale = new Vector3(scale.x + 0.05f, scale.y + 0.05f, 1);
             if (hover.isPlaying) hover.Stop();
             hover.Play();
 
@@ -187,7 +208,7 @@ public class officeScript : MonoBehaviour
         {
             audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
-            player.playerExp += 500;
+            player.playerExp += 200;
 
             player.playerFund -= webinarCost;
             webinar = true;
@@ -223,7 +244,7 @@ public class officeScript : MonoBehaviour
 
         if (player.playerFund >= socialMediaCost)
         {
-            player.playerExp += 800;
+            player.playerExp += 200;
             audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
             player.playerFund -= socialMediaCost;
@@ -272,6 +293,7 @@ public class officeScript : MonoBehaviour
             level++;
             //minus funds
             player.playerFund -= upgradeCost;
+            player.playerExp += 100;
             Time.timeScale = 0f;
             warningPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Success");
             warningPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Office leveled up from Level " + (level - 1) + " to Level " + level);

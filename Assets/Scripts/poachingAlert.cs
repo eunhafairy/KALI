@@ -15,6 +15,18 @@ public class poachingAlert : MonoBehaviour
 
     void Start()
     {
+        switch (player.playerLevel){
+
+            case 1:
+                rate =(int) (20 - (20 * 0.1f));
+                break;
+            case 2:
+                rate = (int)(20 - (20 * 0.3f));
+                break;
+            case 3:
+                rate = (int)(20 - (20 * 0.5f));
+                break;
+        }
       
         //disable alert windows at start
         gObj_poach_alert.SetActive(false);
@@ -30,6 +42,22 @@ public class poachingAlert : MonoBehaviour
         
         //invoke poaching activities
         InvokeRepeating("poacherAlert", 10, rate);
+    }
+    private void Update()
+    {
+        switch (player.playerLevel)
+        {
+
+            case 1:
+                rate = (int)(20 - (20 * 0.1f));
+                break;
+            case 2:
+                rate = (int)(20 - (20 * 0.3f));
+                break;
+            case 3:
+                rate = (int)(20 - (20 * 0.5f));
+                break;
+        }
     }
 
     void poacherAlert()
@@ -66,9 +94,11 @@ public class poachingAlert : MonoBehaviour
         gObj_poach_alert.SetActive(false);
         
         flag2 = false;
-        if (!flag && !flag2) { 
+        if (!flag && !flag2) {
 
             //decrease tamaraw
+            audioManager.GetChild(3).gameObject.GetComponent<AudioSource>().Play();
+
             int rand = Random.Range(1,5);
             player.tamarawNumber -= rand;
             Time.timeScale = 0f;
