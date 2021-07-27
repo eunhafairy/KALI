@@ -55,7 +55,7 @@ public class DeployRanger : MonoBehaviour
             Time.timeScale = 0f;
             encounterPanel.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().SetText("Success!!");
             encounterPanel.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().SetText("Your rangers were successful in defending the tamaraws. Cheers!");
-            player.playerExp += 200; //player exp
+            player.playerExp += 100; //player exp
             encounterPanel.SetActive(true);
            
             Debug.LogWarning("Success! Rolled: " + rand + " out of " + max + ". Roll should be less than or equal to: " + chance);

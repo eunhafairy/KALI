@@ -33,8 +33,8 @@ public class GameManager : MonoBehaviour
         flag = true;
         notif.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Hello!");
 
-        injuredRate = 35;
-        if (research.scout) injuredRate -= (35 * 0.15f);
+        injuredRate = 30;
+        if (research.scout) injuredRate -= (30 * 0.15f);
         InvokeRepeating("findInjured", 10, injuredRate);
         InvokeRepeating("salary",20,50);
     }
@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
 
         
         int no_emp = (barracks.noRangers*2000) + (clinic.noVet * 3000) + (ward.noWardens * 2000);
-        player.playerExp += 200;
+        player.playerExp += 100;
         player.playerFund -= no_emp;
         salaryNotice();
        

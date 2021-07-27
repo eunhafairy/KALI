@@ -8,7 +8,7 @@ public static class SaveSystem
     public static void SavePlayer(PlayerData player, BarracksScript barracks, ClinicScript clinic, WardScript ward, officeScript office, researchScript research) {
 
         BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/playerData.ss";
+        string path = Path.Combine(Application.persistentDataPath, "playerData.ss");
         FileStream stream = new FileStream(path, FileMode.Create);
         Data data = new Data(player, barracks, clinic, ward, office, research);
 
@@ -20,7 +20,7 @@ public static class SaveSystem
     }
     public static Data loadPlayer() {
 
-        string path = Application.persistentDataPath + "/playerData.ss";
+        string path = Path.Combine(Application.persistentDataPath, "playerData.ss");
         if (File.Exists(path))
         {
             BinaryFormatter formatter = new BinaryFormatter();

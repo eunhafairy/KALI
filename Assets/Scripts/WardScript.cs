@@ -193,7 +193,7 @@ public class WardScript : MonoBehaviour
     public void freeTamaraw(GameObject _button, int index) {
 
         GameObject _recoveryCard = _button.transform.parent.gameObject;
-        player.playerExp += 800;
+        player.playerExp += 150;
         audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
         _recoveryCard.transform.GetChild(4).gameObject.SetActive(false);
@@ -214,7 +214,7 @@ public class WardScript : MonoBehaviour
         
         if (player.playerFund >= upgradeCost)
         {
-            player.playerExp += 800;
+            player.playerExp += 150;
             audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
             level++;
@@ -270,7 +270,7 @@ public class WardScript : MonoBehaviour
         {
             if (player.playerFund >= wardenCost)
             {
-                player.playerExp += 400;
+                player.playerExp += 150;
                 audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
                 noWardens++;

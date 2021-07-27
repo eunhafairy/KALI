@@ -127,7 +127,7 @@ public class ClinicScript : MonoBehaviour
             if (vetCost <= player.playerFund) {
 
                 player.playerFund -= vetCost;
-                player.playerExp += 200;
+                player.playerExp += 100;
                 noVet++;
                 audioManager.transform.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
                 //instantiate vetPrefab
@@ -213,7 +213,7 @@ public class ClinicScript : MonoBehaviour
         if (noAdmitted < noRooms)
         {
 
-            player.playerExp += 200;
+            player.playerExp += 100;
 
             GameObject newTamaraw = Instantiate(tamaraw, transform.GetChild(2));
             newTamaraw.GetComponent<TamarawScript>().health = Random.Range(1,50);
@@ -248,7 +248,7 @@ public class ClinicScript : MonoBehaviour
         {
             //upgrade clinic
             level++;
-            player.playerExp += 400;
+            player.playerExp += 100;
 
             switch (level) {
                 case 2:
@@ -368,7 +368,7 @@ public class ClinicScript : MonoBehaviour
         int chance = (int) ((noVet * 0.1f) * 100);
         if (rand <= chance)
         {
-            player.playerExp += 500;
+            player.playerExp += 100;
             Time.timeScale = 0f;
             moveToward.SetActive(true);
             _roomCard.transform.GetChild(4).gameObject.SetActive(false);
@@ -408,7 +408,7 @@ public class ClinicScript : MonoBehaviour
 
         if (rand <= 30)
         {
-            player.playerExp += 400;
+            player.playerExp += 100;
             audioManager.transform.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
             Time.timeScale = 0f;
@@ -434,7 +434,7 @@ public class ClinicScript : MonoBehaviour
 
         if (ward.GetComponent<WardScript>().tamarawRecovering < ward.GetComponent<WardScript>().maxCapacity)
         {
-            player.playerExp += 200;
+            player.playerExp += 100;
 
             GameObject newTam = Instantiate(tamaraw, ward.transform.GetChild(1));
             newTam.GetComponent<TamarawScript>().recovery = Random.Range(50, 100);

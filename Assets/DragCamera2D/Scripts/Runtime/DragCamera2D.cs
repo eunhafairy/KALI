@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 public class DragCamera2D : MonoBehaviour
@@ -173,8 +175,10 @@ public class DragCamera2D : MonoBehaviour
 
             this.dollyRail = dolly;
 
+#if UNITY_EDITOR
             Selection.activeGameObject = go;
             SceneView.FrameLastActiveSceneView();
+#endif
         }
     }
 
@@ -185,7 +189,9 @@ public class DragCamera2D : MonoBehaviour
             cb.guiColour = new Color(0,0,1f,0.1f);
             cb.pointa = new Vector3(20,20,0);
             this.bounds = cb;
+#if UNITY_EDITOR
             EditorUtility.SetDirty(this);
+#endif
         }
     }
 

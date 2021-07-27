@@ -226,7 +226,7 @@ public class researchScript : MonoBehaviour
                     audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
                     player.playerFund -= 6000;
 
-                    player.playerExp += 200;
+                    player.playerExp += 100;
 
                     artificial = true;
                     tamarawGeneration gm = GameObject.Find("GameManager").GetComponent<tamarawGeneration>();
@@ -253,13 +253,13 @@ public class researchScript : MonoBehaviour
                 {
                     audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
                     player.playerFund -= 9000;
-                    player.playerExp += 200;
+                    player.playerExp += 100;
 
                     scout = true;
 
                     GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
                     gm.CancelInvoke();
-                    float injuredRate = (35 - (35 * 0.15f));
+                    float injuredRate = (30 - (30 * 0.15f));
                     int rand = Random.Range(10, 20);
                     Debug.LogWarning(injuredRate);
                     gm.InvokeRepeating("findInjured", rand, injuredRate);
@@ -281,7 +281,7 @@ public class researchScript : MonoBehaviour
             case 3:
                 if (player.playerFund >= 12000)
                 {
-                    player.playerExp += 200;
+                    player.playerExp += 100;
                     player.playerFund -= 12000;
 
                     native = true;

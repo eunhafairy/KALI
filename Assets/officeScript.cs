@@ -171,7 +171,7 @@ public class officeScript : MonoBehaviour
         {
             audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
-            player.playerExp += 200;
+            player.playerExp += 100;
             player.playerFund -= tarpCost;
             tarp = true;
             fundRate += 0.1f;
@@ -208,7 +208,7 @@ public class officeScript : MonoBehaviour
         {
             audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
-            player.playerExp += 200;
+            player.playerExp += 100;
 
             player.playerFund -= webinarCost;
             webinar = true;
@@ -244,7 +244,7 @@ public class officeScript : MonoBehaviour
 
         if (player.playerFund >= socialMediaCost)
         {
-            player.playerExp += 200;
+            player.playerExp += 100;
             audioManager.GetChild(2).gameObject.GetComponent<AudioSource>().Play();
 
             player.playerFund -= socialMediaCost;
